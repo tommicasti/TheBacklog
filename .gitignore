@@ -1,0 +1,12 @@
+# File specifici di Visual Studio e VS Code
+.vs/
+.vscode/
+
+# Cartelle di build e dipendenze
+[Bb]in/
+[Oo]bj/
+/packages/
+
+# File utente e temporanei
+*.user
+*.suo
