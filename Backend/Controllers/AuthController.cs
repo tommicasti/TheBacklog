@@ -13,4 +13,15 @@ public class AuthController : ControllerBase
         _context = context;
         _configuration = configuration;
     }
+
+
+    [httpGet]
+    public async Task<IActionResult> Login(LoginViewModel model)
+    {
+
+
+        return "ciao";
+
+    }
+
 }
