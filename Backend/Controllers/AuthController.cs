@@ -15,13 +15,13 @@ public class AuthController : ControllerBase
     }
 
 
-    [httpGet]
-    public async Task<IActionResult> Login(LoginViewModel model)
-    {
+    //[httpGet]
+    //public async Task<IActionResult> Login(LoginViewModel model)
+    //{
 
 
-        return "ciao";
+    //    return "ciao";
 
-    }
+    //}
 
 }
