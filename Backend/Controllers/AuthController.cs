@@ -17,14 +17,19 @@ using GameShelf.API.Services;
 public class AuthController : ControllerBase
 {
     private readonly IConfiguration _config;
-    private readonly UserService _userService;
-    public AuthController(UserService userService, IConfiguration configuration)
+    private readonly IUserService _userService;
+    public AuthController(IUserService userService, IConfiguration configuration)
     {
         _config = configuration;
         _userService = userService; 
     }
 
 
+    [HttpGet("ciao")]
+    public string Ciao()
+    {
+        return "ciao";
+    }
 
     public string GenerateJwtToken(User user)
     {
