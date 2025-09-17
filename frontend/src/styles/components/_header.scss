@@ -1,0 +1,60 @@
+@import '../abstracts/variables';
+
+.header{
+    background-color: $secondary-color;
+    display: flex;
+    width: 100%;
+    gap: 3.65vw;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 28px 0;
+    align-items: center;
+
+    &-title {
+        .title{
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+
+            &:hover{
+                text-decoration: none;
+            }
+        }
+    }
+
+    &-nav{
+        a{
+            color: white;
+            text-decoration: none;
+
+        }
+
+        a:hover{
+            text-decoration: underline;
+        }
+    }
+
+    &-user {
+        .login-register{
+            background-color: $button-color;
+            display: flex;
+            border-radius: $border-radius-32;
+            border-style: solid;
+            border-color: $third-color;
+            text-decoration: none;
+
+            span{
+                padding: $padding-8;
+                color: white;
+                font-weight: $weight-700;
+                font-size: 16px;
+                text-transform: uppercase;
+            }
+
+            &:hover{
+                cursor: pointer;
+            }
+        }
+    }
+}
