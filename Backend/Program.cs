@@ -6,6 +6,17 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+var myFrontendApp = "AllowMyFrontend";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myFrontendApp,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:3000") 
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                      });
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
