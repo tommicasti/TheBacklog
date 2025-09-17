@@ -16,7 +16,7 @@ export default function Login() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    Username: (e.target as HTMLFormElement).emailSignIn.value,
+                    Username: (e.target as HTMLFormElement).usernameSignIn.value,
                     Password: (e.target as HTMLFormElement).passwordSignIn.value,
                 }),
             });
@@ -36,7 +36,7 @@ export default function Login() {
             <h2>Sign in</h2>
             <p>Sign in with your backlog account</p>
             <form id="signin-form" className="form" onSubmit={e => loginUser(e)}>
-                <input type="email" name="emailSignIn" placeholder="Email" required />
+                <input type="text" name="usernameSignIn" placeholder="Username" required />
                 <input type="password" name="passwordSignIn" placeholder="Password" required />
                 <button type="submit" className="standard-button"><span>Sign In</span></button>
             </form>
