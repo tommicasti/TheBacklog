@@ -34,27 +34,4 @@
             text-decoration: underline;
         }
     }
-
-    &-user {
-        .login-register{
-            background-color: $button-color;
-            display: flex;
-            border-radius: $border-radius-32;
-            border-style: solid;
-            border-color: $third-color;
-            text-decoration: none;
-
-            span{
-                padding: $padding-8;
-                color: white;
-                font-weight: $weight-700;
-                font-size: 16px;
-                text-transform: uppercase;
-            }
-
-            &:hover{
-                cursor: pointer;
-            }
-        }
-    }
 }
