@@ -16,7 +16,7 @@ namespace GameShelf.API.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
 
-            modelBuilder.Entity("GameShelf.API.Models.User", b =>
+            modelBuilder.Entity("GameShelf.API.Backend.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -35,7 +35,7 @@ namespace GameShelf.API.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("GameShelf.API.Models.UserGame", b =>
+            modelBuilder.Entity("GameShelf.API.Backend.Models.UserGame", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("TEXT");
