@@ -27,19 +27,14 @@ export default function Register() {
 
     const validateForm = (e: React.FormEvent) => {
         e.preventDefault();
-        const email = (e.target as HTMLFormElement).emailSignUp.value;
-        const confirmEmail = (e.target as HTMLFormElement).confirmEmail.value;
+        const username = (e.target as HTMLFormElement).usernameSignUp.value;
         const password = (e.target as HTMLFormElement).passwordSignUp.value;
         const confirmPassword = (e.target as HTMLFormElement).confirmPassword.value;
 
-        if(email === confirmEmail){
-            if(password === confirmPassword){
-                registerUser(email, password)
-            }else{
-                alert("Passwords don't match");
-            }
+        if(password === confirmPassword){
+            registerUser(username, password)
         }else{
-            alert("Emails don't match");
+            alert("Passwords don't match");
         }
     }
 
@@ -48,8 +43,7 @@ export default function Register() {
             <h2>Create an account</h2>
             <p>Sign up and start manage your game backlog!</p>
             <form id="signup-form" className="form" onSubmit={e => validateForm(e)}>
-                <input type="email" name="emailSignUp" placeholder="Email" required />
-                <input type="email" name="confirmEmail" placeholder="Confirm Email" required />
+                <input type="text" name="usernameSignUp" placeholder="Username" required />
                 <input type="password" name="passwordSignUp" placeholder="Password" required />
                 <input type="password" name="confirmPassword" placeholder="Confirm Password" required />
                 <button type="submit" className="standard-button dark-border"><span>Sign Up</span></button>
