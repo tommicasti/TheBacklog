@@ -8,7 +8,12 @@ RUN dotnet restore
 
 # Copia il resto dei file sorgente e compila l'applicazione
 COPY . ./
+COPY entrypoint.sh ./
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
 RUN dotnet publish -c Release -o out
+
+
 
 # Usa un'immagine più leggera per l'esecuzione effettiva dell'applicazione
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
@@ -20,5 +25,8 @@ ENV ASPNETCORE_URLS=http://+:5141
 
 EXPOSE 5141
 
+ENTRYPOINT ["./entrypoint.sh"]
+
 # Comando per avviare l'applicazione
-ENTRYPOINT ["dotnet", "GameShelf.API.dll"]
+#CMD ["dotnet", "GameShelf.API.dll"]
+ENTRYPOINT  ["dotnet", "GameShelf.API.dll"]

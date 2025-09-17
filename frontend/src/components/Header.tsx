@@ -12,7 +12,7 @@ export default function Header() {
             </section>
 
             <section className="header-user">
-                <button type='button' className="login-register" onClick={() => window.location.href = '/signup'}>
+                <button type='button' className="standard-button" onClick={() => window.location.href = '/signup'}>
                     <span>sign up</span>
                 </button>
             </section>
