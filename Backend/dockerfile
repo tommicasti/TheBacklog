@@ -26,9 +26,6 @@ COPY --from=build-env /app/Migrations ./Migrations
 ENV ASPNETCORE_URLS=http://+:5141
 
 EXPOSE 5141
-COPY --from=build-env /app/entrypoint.sh .
-
-#ENTRYPOINT ["./entrypoint.sh"]
 
 # Comando per avviare l'applicazione
 CMD ["dotnet", "GameShelf.API.dll"]
