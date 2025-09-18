@@ -22,9 +22,9 @@ export default function Login() {
             });
 
             if(response.ok){
-                let data = await response.json;
-                //dispatch(setToken(data.token));
+                let data = await response.json();
                 console.log(data);
+                dispatch(setToken(data.token));
             }
         }catch(err){
             console.error(err);
