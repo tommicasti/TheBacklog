@@ -13,7 +13,7 @@ using GameShelf.API.Services;
 
 
 [ApiController]
-[Route("api/controller")]
+[Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly IConfiguration _config;
