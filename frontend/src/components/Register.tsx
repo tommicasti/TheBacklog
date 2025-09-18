@@ -3,7 +3,7 @@ import { REGISTER_API_URL } from '../util/constants';
 
 export default function Register() {
     
-    const registerUser = async (email: any, password: any) => {        
+    const registerUser = async (username: any, password: any) => {        
         try{
             let response = await fetch(REGISTER_API_URL, {
                 method: 'POST',
@@ -11,7 +11,7 @@ export default function Register() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    Username: email,
+                    Username: username,
                     Password: password,
                 }),
             });
