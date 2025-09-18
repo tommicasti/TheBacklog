@@ -15,12 +15,8 @@ export default function Register() {
                     Password: password,
                 }),
             });
-
-            if(response.ok){
-                let data = await response.json;
-                console.log(data);
-            }
         }catch(err){
+            //TODO: Handle error 
             console.error(err);
         }
     }

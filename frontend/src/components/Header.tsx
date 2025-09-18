@@ -1,4 +1,10 @@
+import { useSelector, useDispatch } from "react-redux";
+import { clearToken } from "../redux/slicers/authTokenSlice";
+
 export default function Header() {
+    const isAuthenticated = useSelector((state: any) => state.authToken.isAuthenticated);
+    const dispatch = useDispatch();
+
     return (
         <header className="header">
             <section className="header-title">
@@ -12,9 +18,19 @@ export default function Header() {
             </section>
 
             <section className="header-user">
-                <button type='button' className="standard-button" onClick={() => window.location.href = '/signup'}>
-                    <span>sign up</span>
-                </button>
+                {isAuthenticated &&
+                    <button type='button' className="standard-button" onClick={() => {
+                                dispatch(clearToken());
+                            }
+                        }>
+                        <span>log out</span>
+                    </button>
+                }
+                {!isAuthenticated &&
+                    <button type='button' className="standard-button" onClick={() => window.location.href = '/signup'}>
+                        <span>sign up</span>
+                    </button>
+                }
             </section>
         </header>
     );
