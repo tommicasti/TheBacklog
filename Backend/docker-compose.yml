@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # Servizio per la tua API .NET
+  api:
+    build: .
+    container_name: gameshelf-be
+    ports:
+      - "5141:5141"
+    environment:
+      # Passiamo la stringa di connessione come variabile d'ambiente
+      - ConnectionStrings__DefaultConnection=Server=db;Port=3306;Database=GameShelfDB;Uid=root;Pwd=laTuaPasswordForte!123
+    depends_on:
+      - db
+    restart: always
+
+  # Servizio per il database MariaDB
+  db:
+    image: mariadb:latest
+    container_name: gameshelf-db
+    environment:
+      # Variabili d'ambiente per configurare il database MariaDB
+      - MARIADB_ROOT_PASSWORD=laTuaPasswordForte!123
+      - MARIADB_DATABASE=GameShelfDB
+    volumes:
+      # Mappa il volume per rendere i dati persistenti
+      - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+# Definiamo i volumi per la persistenza dei dati
+volumes:
+  db-data:

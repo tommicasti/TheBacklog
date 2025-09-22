@@ -8,17 +8,17 @@ RUN dotnet restore
 
 # Copia il resto dei file sorgente e compila l'applicazione
 COPY . ./
-RUN dotnet tool install --global dotnet-ef
+#RUN dotnet tool install --global dotnet-ef
 ENV PATH="$PATH:/root/.dotnet/tools"
-RUN dotnet ef migrations add InitialCreate
-RUN dotnet ef database update 
+#RUN dotnet ef migrations add InitialCreate
+#RUN dotnet ef database update 
 RUN dotnet publish -c Release -o out
 
 # Usa un'immagine pi� leggera per l'esecuzione effettiva dell'applicazione
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 COPY --from=build-env /app/out .
-COPY --from=build-env /app/gameshelf.db .
+#COPY --from=build-env /app/gameshelf.db .
 COPY --from=build-env /app/Migrations ./Migrations
 
 
