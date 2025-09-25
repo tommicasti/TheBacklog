@@ -6,7 +6,7 @@ export default function PopularGames() {
     const [games, setGames] = useState([]);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
+    /*useEffect(() => {
         const fetchPopularGames = async () => {
             try {
                 const response = await fetch(POPULAR_GAMES_API_URL);
@@ -21,7 +21,7 @@ export default function PopularGames() {
         }
 
         fetchPopularGames();
-    }, [])
+    }, [])*/
 
     return (
         <article className="popular-games-section">

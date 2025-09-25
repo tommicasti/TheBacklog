@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setToken } from '../redux/slicers/authTokenSlice';
 import { LOGIN_API_URL } from '../util/constants';
 
 export default function Login() {
     const dispatch = useDispatch();
+    const [error, setError] = useState(false);
 
     const loginUser = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,11 +24,14 @@ export default function Login() {
 
             if(response.ok){
                 let data = await response.json();
-                console.log(data);
                 dispatch(setToken(data.token));
+                setError(false);
+            } else{
+                setError(true);
             }
         }catch(err){
             console.error(err);
+            setError(true);
         }
     }
 
@@ -35,6 +39,7 @@ export default function Login() {
         <div>
             <h2>Sign in</h2>
             <p>Sign in with your backlog account</p>
+            {error && <p className="error-message">Login failed. Please try again.</p>}
             <form id="signin-form" className="form" onSubmit={e => loginUser(e)}>
                 <input type="text" name="usernameSignIn" placeholder="Username" required />
                 <input type="password" name="passwordSignIn" placeholder="Password" required />

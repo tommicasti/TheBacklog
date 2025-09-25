@@ -6,3 +6,4 @@ export const REGISTER_API_URL = `${BASE_API_URL}auth/register`;
 
 // GAMES API Endpoints
 export const POPULAR_GAMES_API_URL = `${BASE_API_URL}games/popular`;
+export const SEARCH_GAMES_API_URL = `${BASE_API_URL}games/search?gameName=`; // Append search query
