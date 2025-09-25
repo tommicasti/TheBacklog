@@ -24,13 +24,26 @@ public class AuthController : ControllerBase
         _userService = userService; 
     }
 
-
+    /// <summary>
+    /// Handles HTTP GET requests to the "ciao" endpoint and returns a greeting message.
+    /// </summary>
+    /// <returns>A string containing the greeting message "ciao".</returns>
+    /// TEST USE
     [HttpGet("ciao")]
     public string Ciao()
     {
         return "ciao";
     }
 
+    /// <summary>
+    /// Generates a JSON Web Token (JWT) for the specified user.
+    /// </summary>
+    /// <remarks>The generated token includes the user's ID as the subject claim (<see
+    /// cref="JwtRegisteredClaimNames.Sub"/>) and a unique identifier as the token ID claim (<see
+    /// cref="JwtRegisteredClaimNames.Jti"/>). The token is signed using the HMAC-SHA256 algorithm and is valid for 24
+    /// hours from the time of generation.</remarks>
+    /// <param name="user">The user for whom the JWT is being generated. The user's ID is included as a claim in the token.</param>
+    /// <returns>A string representation of the generated JWT.</returns>
     public string GenerateJwtToken(User user)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
@@ -53,6 +66,16 @@ public class AuthController : ControllerBase
 
     }
 
+    /// <summary>
+    /// Registers a new user with the provided registration details.
+    /// </summary>
+    /// <remarks>This method checks if the username already exists before attempting to register the user.  If
+    /// the username is already in use, the method returns a bad request response with an appropriate error
+    /// message.</remarks>
+    /// <param name="registerDto">An object containing the user's registration details, including username and other required information.</param>
+    /// <returns>An <see cref="IActionResult"/> indicating the result of the registration operation.  Returns <see
+    /// cref="BadRequestObjectResult"/> if the username already exists, or <see cref="OkObjectResult"/> with a success
+    /// message upon successful registration.</returns>
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterDto registerDto)
     {
@@ -67,6 +90,15 @@ public class AuthController : ControllerBase
     }
 
 
+    /// <summary>
+    /// Authenticates a user based on the provided credentials and generates a JWT token if successful.
+    /// </summary>
+    /// <remarks>This method verifies the provided username and password against stored user data. If the
+    /// credentials are valid,  a JWT token is generated and returned in the response. Otherwise, an unauthorized
+    /// response is returned.</remarks>
+    /// <param name="request">An object containing the username and password for authentication.</param>
+    /// <returns>An <see cref="IActionResult"/> containing an HTTP 200 response with a JWT token if authentication is successful,
+    /// or an HTTP 401 response if the credentials are invalid.</returns>
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginDto request)
     {
