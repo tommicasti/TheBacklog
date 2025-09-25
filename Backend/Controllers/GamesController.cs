@@ -31,7 +31,7 @@ namespace GameShelf.API.Controllers
         /// Returns a <see cref="StatusCodeResult"/> with status code 502 if there is an error communicating with the
         /// external API.</returns>
         [HttpGet("search")]
-        public async Task<IActionResult> SearchGames([FromQuery] string gameName)
+        public async Task<IActionResult> SearchGames([FromQuery] string gameName, int pageSize)
         {
 
             if (string.IsNullOrEmpty(gameName))
@@ -40,7 +40,7 @@ namespace GameShelf.API.Controllers
             }
 
             var client = _clientFactory.CreateClient();
-            var requestUrl = $"https://api.rawg.io/api/games?key={_apiKey}&search={gameName}";
+            var requestUrl = $"https://api.rawg.io/api/games?key={_apiKey}&search={gameName}&ordering=-metacritic&page_size={pageSize}";
 
             try
             {
