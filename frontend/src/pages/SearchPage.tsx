@@ -12,15 +12,19 @@ export default function SearchPage() {
 
     const fetchGames = async (query: string) => {
         try {
-            const response = await fetch(SEARCH_GAMES_API_URL + query);
+            const response = await fetch(SEARCH_GAMES_API_URL.replace('{gamename}', encodeURIComponent(query)).replace('{pagesize}', '20'));
             
             if(response.ok){
                 const data = await response.json();
                 setGames(data.results);
                 setLoading(false);
+            }else{
+                console.error('Error fetching games:', response.statusText);
+                setLoading(false);
             }
         } catch (err) {
-            console.error(err);
+            console.error('Error fetching games:', err);
+            setLoading(false);
         }
     }
 
@@ -32,7 +36,7 @@ export default function SearchPage() {
 
     const getGamesList = () => {
         if(games.length === 0){
-            return <p>No games found.</p>
+            return <span className="no-games">Uh Oh, No games found...</span>
         } else {
             return (
                 <div className="games-list">
@@ -55,7 +59,7 @@ export default function SearchPage() {
             <Header />
             <section className="games-section">
                 <h2>Search Results for {searchedGame}</h2>
-                {!!loading ? <p className="loading-text">Loading Results</p> : getGamesList()}
+                {!!loading ? <span className="loading-text">Loading Results</span> : getGamesList()}
             </section>
         </>
     );

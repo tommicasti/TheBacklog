@@ -31,4 +31,12 @@
             color: $text-color;
         }
     }
+
+    &.mobile {
+        flex-direction: column;
+
+        .signin-form, .signup-form {
+            width: unset;
+        }
+    }
 }

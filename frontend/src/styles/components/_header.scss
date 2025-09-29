@@ -35,3 +35,52 @@
         }
     }
 }
+
+.dropdown-menu{
+    display: flex;
+    flex-direction: column;
+    color: $text-color-black;
+    background-color: $third-color;
+
+    .link-section, .search-section, .user-section{
+        padding: 8px;
+        border-bottom: 1px solid $secondary-color;
+    }
+
+    .search-section {
+        &-title{
+            display: flex;
+            width: 100%;
+        }
+
+        .search-form{
+            display: flex;
+            
+            input{
+                flex: 1;
+                padding: $padding-8;
+                border: 1px solid $secondary-color;
+                border-radius: $border-radius-8;
+            }
+        }
+    }
+
+    .link-section-nav, .search-form{
+        margin-top: 8px;
+        margin-left: 8px;
+        margin-right: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .user-section-logout, .user-section-signup{
+        display: flex;
+        width: 100%;
+    }
+
+    a{
+        color: $text-color-black;
+    }
+
+}
