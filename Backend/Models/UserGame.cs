@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GameShelf.API.Backend.Models;
 
@@ -16,8 +17,10 @@ public class UserGame
     public int Id { get; set; } 
 
     [Required]
-    public string UserId { get; set; } = string.Empty;
-
+    public int UserId { get; set; }
+    
+    [ForeignKey(nameof(UserId))]
+    public User User { get; set; } = null!;
     [Required]
     public int RawgGameId { get; set; } // ID del gioco su RAWG
 

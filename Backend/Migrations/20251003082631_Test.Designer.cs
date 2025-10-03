@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameShelf.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250919103217_InitialCreateMariaDB")]
-    partial class InitialCreateMariaDB
+    [Migration("20251003082631_Test")]
+    partial class Test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,8 +47,8 @@ namespace GameShelf.API.Migrations
 
             modelBuilder.Entity("GameShelf.API.Backend.Models.UserGame", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(255)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<int>("RawgGameId")
                         .HasColumnType("int");
@@ -66,6 +66,17 @@ namespace GameShelf.API.Migrations
                     b.HasKey("UserId", "RawgGameId");
 
                     b.ToTable("UserGames");
+                });
+
+            modelBuilder.Entity("GameShelf.API.Backend.Models.UserGame", b =>
+                {
+                    b.HasOne("GameShelf.API.Backend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }
