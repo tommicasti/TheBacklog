@@ -5,15 +5,16 @@ namespace GameShelf.API.DTOs
 {
     public class LibraryDtos
     {
-        public record AddGameDto(
-            [Required] int RawgGameId,
-            [Required] string GameTitle,
-            string CoverImageUrl,
-            [Required] GameStatus Status
-        );
+        public record AddGameToLibraryDto(
+    [Required] int RawgGameId,
+    [Required] GameStatus Status,
+    string? Platform // Platform è specifica dell'utente
+);
 
         public record UpdateGameDto(
-            [Required] GameStatus Status
+            [Required] GameStatus Status,
+            [Range(1, 5)] int? UserRating
         );
+
     }
 }
