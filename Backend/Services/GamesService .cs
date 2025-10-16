@@ -1,4 +1,6 @@
 ﻿using GameShelf.API.DTOs;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Primitives;
 using System.Text.Json;
 using static GameShelf.API.DTOs.GameDtos;
 
@@ -8,15 +10,27 @@ public class GamesService : IGamesService
 {
     private readonly IHttpClientFactory _clientFactory;
     private readonly string _apiKey;
+    private readonly IMemoryCache _cache;
 
-    public GamesService(IHttpClientFactory clientFactory, IConfiguration configuration)
+    private static CancellationTokenSource _resetCacheToken = new();// per invalidare la cache
+
+    public GamesService(IHttpClientFactory clientFactory, IConfiguration configuration, IMemoryCache cache)
     {
         _clientFactory = clientFactory;
         _apiKey = configuration["RAWG:ApiKey"];
+        _cache= cache;
     }
 
     public async Task<IEnumerable<GameSummaryDto>> SearchGamesAsync(string query)
     {
+        var cacheKey = $"search-{query.ToLower()}";
+        // Cerchiamo i dati nella cache. 
+        if (_cache.TryGetValue(cacheKey, out IEnumerable<GameSummaryDto>? cachedGames))
+        {
+           //  i dati sono in cache, li restituiamo immediatamente!
+            return cachedGames ?? Enumerable.Empty<GameSummaryDto>();
+        }
+        // Se i dati non sono in cache, eseguiamo la logica esistente per chiamare RAWG
         var client = _clientFactory.CreateClient();
         var requestUrl = $"https://api.rawg.io/api/games?key={_apiKey}&search={query}";
         var response = await client.GetAsync(requestUrl);
@@ -27,7 +41,7 @@ public class GamesService : IGamesService
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var rawgResponse = JsonSerializer.Deserialize<RawgSearchResponse>(jsonResponse, options);
 
-        return rawgResponse?.Results.Select(g => new GameSummaryDto
+        var games= rawgResponse?.Results.Select(g => new GameSummaryDto
         {
             Id = g.Id,
             Name = g.Name,
@@ -35,10 +49,27 @@ public class GamesService : IGamesService
             MetacriticScore = g.Metacritic,
             Released = g.Released
         }) ?? Enumerable.Empty<GameSummaryDto>();
+        
+        // Prima di restituire i dati, li salviamo nella cache per le prossime richieste
+        var cacheOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromHours(1)) // Scadenza cache (es. 1 ora)
+            .AddExpirationToken(new CancellationChangeToken(_resetCacheToken.Token)); // Collega all'interruttore
+
+        _cache.Set(cacheKey, games, cacheOptions);
+        return games;
+
     }
 
     public async Task<GameDetailDto?> GetGameDetailsAsync(int rawgGameId)
     {
+        var cacheKey = $"game-{rawgGameId}";
+        // Controllo della cache
+        if (_cache.TryGetValue(cacheKey, out GameDetailDto? cachedGame))
+        {
+            return cachedGame;
+        }
+
+        // Chiamata all'API se non è in cache
         var client = _clientFactory.CreateClient();
         var requestUrl = $"https://api.rawg.io/api/games/{rawgGameId}?key={_apiKey}";
         var response = await client.GetAsync(requestUrl);
@@ -51,7 +82,7 @@ public class GamesService : IGamesService
 
         if (rawgGame == null) return null;
 
-        return new GameDetailDto
+        var gameDetails = new GameDetailDto
         {
             Id = rawgGame.Id,
             Name = rawgGame.Name,
@@ -62,17 +93,35 @@ public class GamesService : IGamesService
             Platforms = rawgGame.Platforms.Select(p => p.Platform.Name).ToList(),
             Genres = rawgGame.Genres.Select(g => g.Name).ToList()
         };
+        
+        // 4. Salvataggio in cache
+        var cacheOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromDays(1)) // I dettagli di un gioco cambiano raramente, possiamo tenerli per più tempo
+            .AddExpirationToken(new CancellationChangeToken(_resetCacheToken.Token));
+
+        _cache.Set(cacheKey, gameDetails, cacheOptions);
+
     }
 
 
     public async Task<IEnumerable<GameSummaryDto>> GetPopularGamesAsync()
     {
+        //  Chiave statica per questa chiamata
+        const string cacheKey = "popular-games";
+
+        // Controllo della cache
+        if (_cache.TryGetValue(cacheKey, out IEnumerable<GameSummaryDto>? cachedGames))
+        {
+            return cachedGames ?? Enumerable.Empty<GameSummaryDto>();
+        }
+
+        //  Chiamata all'API se non è in cache
         var client = _clientFactory.CreateClient();
         var lastYear = DateTime.Now.AddYears(-1).ToString("yyyy-MM-dd");
         var today = DateTime.Now.ToString("yyyy-MM-dd");
 
         //  'ordering=-metacritic' per ordinare per voto della critica
-        var requestUrl = $"https://api.rawg.io/api/games?key={_apiKey}&dates={lastYear},{today}&ordering=-added";
+        var requestUrl = $"https://api.rawg.io/api/games?key={_apiKey}&dates={lastYear},{today}&ordering=-metacritic";
 
         var response = await client.GetAsync(requestUrl);
 
@@ -87,7 +136,7 @@ public class GamesService : IGamesService
         var rawgResponse = JsonSerializer.Deserialize<RawgSearchResponse>(jsonResponse, options);
 
         // Mappiamo il risultato nel nostro DTO pulito
-        return rawgResponse?.Results.Select(g => new GameSummaryDto
+        var popularGames = rawgResponse?.Results.Select(g => new GameSummaryDto
         {
             Id = g.Id,
             Name = g.Name,
@@ -95,9 +144,29 @@ public class GamesService : IGamesService
             MetacriticScore = g.Metacritic,
             Released = g.Released
         }) ?? Enumerable.Empty<GameSummaryDto>();
+
+        //Salvataggio in cache
+        var cacheOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromHours(6)) // La lista dei giochi popolari può essere aggiornata meno di frequente di una ricerca
+            .AddExpirationToken(new CancellationChangeToken(_resetCacheToken.Token));
+
+        _cache.Set(cacheKey, popularGames, cacheOptions);
+
+        return popularGames;
     }
 
+    public void ClearCache()
+    {
+        // Se l'interruttore esiste, lo "premiamo"
+        if (_resetCacheToken != null && !_resetCacheToken.IsCancellationRequested && _resetCacheToken.Token.CanBeCanceled)
+        {
+            _resetCacheToken.Cancel(); // Invalida tutte le voci collegate
+            _resetCacheToken.Dispose();
+        }
 
+        // Creiamo un nuovo interruttore per le future voci di cache
+        _resetCacheToken = new CancellationTokenSource();
+    }
 }
 
 // Classi helper per deserializzare le risposte di RAWG

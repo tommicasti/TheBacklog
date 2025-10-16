@@ -207,14 +207,39 @@ namespace GameShelf.API.Services
 
     
 
-        public Task<bool> UpdateGameInLibraryAsync(int rawgGameId, UpdateGameDto updateDto)
+        public async Task<bool> UpdateGameInLibraryAsync(int rawgGameId, UpdateGameDto updateDto)
         {
-            throw new NotImplementedException();
+            var userId = GetUserId();
+
+            var userGame = await _db.UserGames.FirstOrDefaultAsync(ug => ug.User.Id == int.Parse(userId) && ug.Game.RawgGameId == rawgGameId);
+            if(userGame == null)
+            {
+                return false;
+            }
+
+     
+            userGame.Status = updateDto.Status;
+            userGame.UserRating = updateDto.UserRating;
+            
+            await _db.SaveChangesAsync();
+            return true;
+
         }
 
-        public Task<bool> RemoveGameFromLibraryAsync(int rawgGameId)
+        public async Task<bool> RemoveGameFromLibraryAsync(int rawgGameId)
         {
-            throw new NotImplementedException();
+            var userId = GetUserId();
+
+            var userGame = await _db.UserGames.FirstOrDefaultAsync(ug => ug.User.Id == int.Parse(userId) && ug.Game.RawgGameId == rawgGameId);
+
+            if (userGame == null)
+            {
+                return false;
+            }
+
+            _db.UserGames.Remove(userGame);
+            await _db.SaveChangesAsync();
+            return true;
         }
 
     }

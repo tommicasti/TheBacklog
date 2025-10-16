@@ -4,6 +4,7 @@ using GameShelf.API.DTOs;
 using GameShelf.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.ConstrainedExecution;
 using static GameShelf.API.DTOs.LibraryDtos;
@@ -111,6 +112,47 @@ namespace GameShelf.API.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Updates the details of a game in the user's library.
+        /// </summary>
+        /// <remarks>This method requires both the game identifier and the updated game details to be
+        /// provided in the request body.</remarks>
+        /// <param name="rawGameId">The unique identifier of the game to be updated.</param>
+        /// <param name="gameDto">An object containing the updated details of the game.</param>
+        /// <returns>An <see cref="IActionResult"/> indicating the result of the operation.  Returns <see cref="NotFound"/> if
+        /// the game is not found in the library, or <see cref="NoContent"/> if the update is successful.</returns>
+        [HttpPut]
+        public async Task<IActionResult> UpdateGameInLibrary([FromBody] int rawGameId, [FromBody] UpdateGameDto gameDto)
+        {
+            var result = await _libraryService.UpdateGameInLibraryAsync(rawGameId, gameDto);
+            if (!result)
+            {
+                return NotFound("Gioco non presente nella libreria");
 
+            }
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Removes a game from the user's library based on the specified game ID.
+        /// </summary>
+        /// <remarks>This method is an HTTP DELETE endpoint and expects the game ID as a route
+        /// parameter.</remarks>
+        /// <param name="rawgGameId">The unique identifier of the game to be removed.</param>
+        /// <returns>An <see cref="IActionResult"/> indicating the result of the operation.  Returns <see cref="NotFound"/> if
+        /// the game is not found in the user's library,  or <see cref="NoContent"/> if the game is successfully
+        /// removed.</returns>
+        [HttpDelete("{rawgGameId}")]
+        public async Task<IActionResult> RemoveGameFromLibrary(int rawgGameId)
+        {
+
+            var success = await _libraryService.RemoveGameFromLibraryAsync(rawgGameId);
+
+            if (!success)
+            {
+                return NotFound("Gioco non trovato nella tua libreria.");
+            }
+            return NoContent();
+        }
     }
 }

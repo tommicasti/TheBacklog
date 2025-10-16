@@ -7,6 +7,7 @@ namespace GameShelf.API.Services
     {
         Task<IEnumerable<GameSummaryDto>> SearchGamesAsync(string query);
         Task<GameDetailDto?> GetGameDetailsAsync(int rawgGameId);
-        Task<IEnumerable<GameSummaryDto>> GetPopularGamesAsync(); 
+        Task<IEnumerable<GameSummaryDto>> GetPopularGamesAsync();
+        void ClearCache();
     }
 }
